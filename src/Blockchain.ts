@@ -14,18 +14,18 @@ class Blockchain {
         this.difficulty = difficulty;
     }
 
-    lastBlock(): Block {
-        return this.chain[this.chain.length - 1];
-    }
-
     static create(difficulty: number): Blockchain {
         const genesisBlock = new Block(null, null);
         return new Blockchain(genesisBlock, difficulty);
     }
 
     addBlock(from: string, to: string, amount: number): void {
-        const blockData: Transaction = {from, to, amount};
-        const lastBlock = this.lastBlock();
+        const blockData: Transaction = {
+            from,
+            to,
+            amount
+        };
+        const lastBlock = this.chain[this.chain.length - 1];
         const newBlock = new Block(blockData, lastBlock.hash);
         newBlock.mine(this.difficulty);
         this.chain.push(newBlock);
