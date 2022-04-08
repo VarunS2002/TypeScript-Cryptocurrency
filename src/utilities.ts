@@ -7,15 +7,20 @@ type Transaction = {
     amount: number;
 };
 
-const calculateHash = (block: Block): string => {
-    const data = JSON.stringify(block.data);
-    const blockData =
-        data +
-        block.previousHash +
-        block.timestamp.toISOString() +
-        block.proofOfWork.toString();
-
-    return createHash("sha256").update(blockData).digest("hex");
+const calculateHash = (dataToHash: string | Transaction | Block): string => {
+    let stringData: string;
+    if (dataToHash instanceof Block) {
+        stringData =
+            JSON.stringify(dataToHash.data) +
+            dataToHash.previousHash +
+            dataToHash.timestamp.toISOString() +
+            dataToHash.proofOfWork.toString();
+    } else if (typeof dataToHash === "string") {
+        stringData = dataToHash;
+    } else {
+        stringData = JSON.stringify(dataToHash);
+    }
+    return createHash("sha256").update(stringData).digest("hex");
 };
 
 export { calculateHash };
