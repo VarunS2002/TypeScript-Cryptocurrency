@@ -37,6 +37,35 @@ class MerkleTree {
         }
         return this.constructMerkleTreeRoot(listOfNodes);
     }
+
+    findSiblingOf(hash: string, siblingNode: MerkleTreeNode = this.root):
+        { node: MerkleTreeNode, left?: boolean } | null {
+        if (siblingNode.hash === hash) return { node: siblingNode };
+        if (!siblingNode.left || !siblingNode.right) return null;
+        if (siblingNode.left.hash === hash) return {
+            node: siblingNode.right,
+            left: false
+        };
+        if (siblingNode.right.hash === hash) return {
+            node: siblingNode.left,
+            left: true
+        };
+        return (
+            this.findSiblingOf(hash, siblingNode.left) ||
+            this.findSiblingOf(hash, siblingNode.right)
+        );
+    }
+
+    isValid(transaction: Transaction): boolean {
+        let hash = calculateHash(transaction);
+        let sibling: { node: MerkleTreeNode, left?: boolean } | null = this.findSiblingOf(hash);
+        while (sibling !== null && sibling.node.hash !== this.root.hash) {
+            const concatenatedHash = sibling.left ? sibling.node.hash + hash : hash + sibling.node.hash;
+            hash = calculateHash(concatenatedHash);
+            sibling = this.findSiblingOf(hash);
+        }
+        return !!(sibling && sibling.node.hash === this.root.hash);
+    }
 }
 
 export default MerkleTree;
