@@ -38,6 +38,10 @@ class MerkleTree {
         return this.constructMerkleTreeRoot(listOfNodes);
     }
 
+    getRootHash(): string {
+        return this.root.hash;
+    }
+
     findSiblingOf(hash: string, siblingNode: MerkleTreeNode = this.root):
         { node: MerkleTreeNode, left?: boolean } | null {
         if (siblingNode.hash === hash) return { node: siblingNode };
