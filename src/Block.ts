@@ -1,19 +1,20 @@
+import MerkleTree from "./MerkleTree";
 import { calculateHash } from "./utilities";
-import type { Transaction } from "./utilities";
+import type Blockchain from "./Blockchain";
+import type Transaction from "./Transaction";
 
 class Block {
-    data: Transaction | null;
+    data: Transaction[];
     previousHash: string | null;
-    hash: string | null;
-    timestamp: Date;
-    proofOfWork: number;
+    rootHash: string;
+    hash: string | null = null;
+    timestamp = new Date();
+    proofOfWork = 0;
 
-    constructor(data: Transaction | null, previousHash: string | null) {
+    constructor(data: Transaction[], previousHash: string | null) {
         this.data = data;
-        this.hash = null;
         this.previousHash = previousHash;
-        this.timestamp = new Date();
-        this.proofOfWork = 0;
+        this.rootHash = MerkleTree.create(data).getRootHash();
     }
 
     mine(difficulty: number): void {
@@ -22,6 +23,10 @@ class Block {
             this.proofOfWork++;
             this.hash = calculateHash(this);
         }
+    }
+
+    isValid(blockChain: Blockchain): boolean {
+        return this.data.every((transaction) => transaction.isValid(blockChain));
     }
 }
 

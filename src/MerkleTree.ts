@@ -1,10 +1,10 @@
 import MerkleTreeNode from "./MerkleTreeNode";
 import { calculateHash } from "./utilities";
-import type { Transaction } from "./utilities";
+import type Transaction from "./Transaction";
 
 class MerkleTree {
-    private root: MerkleTreeNode;
-    private size: number;
+    root: MerkleTreeNode;
+    size: number;
 
     constructor(root: MerkleTreeNode, size: number) {
         this.root = root;
@@ -13,10 +13,9 @@ class MerkleTree {
 
     static create(transactions: Transaction[]): MerkleTree {
         const size = Math.ceil(Math.log2(transactions.length)) + 1;
-        const listOfNodes = transactions.map((transaction) => {
-            const nodeHash = calculateHash(transaction);
-            return new MerkleTreeNode(nodeHash, null, null);
-        });
+        const listOfNodes = transactions.map(
+            (transaction) => new MerkleTreeNode(transaction.hash, null, null)
+        );
         const root = MerkleTree.constructMerkleTreeRoot(listOfNodes);
         return new MerkleTree(root, size);
     }
@@ -61,8 +60,8 @@ class MerkleTree {
     }
 
     isValid(transaction: Transaction): boolean {
-        let hash = calculateHash(transaction);
-        let sibling: { node: MerkleTreeNode, left?: boolean } | null = this.findSiblingOf(hash);
+        let hash = transaction.hash;
+        let sibling = this.findSiblingOf(hash);
         while (sibling !== null && sibling.node.hash !== this.root.hash) {
             const concatenatedHash = sibling.left ? sibling.node.hash + hash : hash + sibling.node.hash;
             hash = calculateHash(concatenatedHash);
