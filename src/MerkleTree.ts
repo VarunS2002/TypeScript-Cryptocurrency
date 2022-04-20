@@ -45,14 +45,18 @@ class MerkleTree {
         { node: MerkleTreeNode, left?: boolean } | null {
         if (siblingNode.hash === hash) return { node: siblingNode };
         if (!siblingNode.left || !siblingNode.right) return null;
-        if (siblingNode.left.hash === hash) return {
-            node: siblingNode.right,
-            left: false
-        };
-        if (siblingNode.right.hash === hash) return {
-            node: siblingNode.left,
-            left: true
-        };
+        if (siblingNode.left.hash === hash) {
+            return {
+                node: siblingNode.right,
+                left: false
+            };
+        }
+        if (siblingNode.right.hash === hash) {
+            return {
+                node: siblingNode.left,
+                left: true
+            };
+        }
         return (
             this.findSiblingOf(hash, siblingNode.left) ||
             this.findSiblingOf(hash, siblingNode.right)

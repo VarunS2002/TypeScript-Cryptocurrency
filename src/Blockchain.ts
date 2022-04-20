@@ -46,8 +46,9 @@ class Blockchain {
                 currentBlock.hash !== calculateHash(currentBlock) ||
                 previousBlock.hash !== currentBlock.previousHash ||
                 !currentBlock.isValid(this)
-            )
+            ) {
                 return false;
+            }
         }
         return true;
     }
