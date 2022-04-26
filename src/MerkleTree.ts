@@ -11,6 +11,10 @@ class MerkleTree {
         this.size = size;
     }
 
+    get rootHash(): string {
+        return this.root.hash;
+    }
+
     static create(transactions: Transaction[]): MerkleTree {
         const size = Math.ceil(Math.log2(transactions.length)) + 1;
         const listOfNodes = transactions.map(
@@ -37,8 +41,15 @@ class MerkleTree {
         return this.constructMerkleTreeRoot(listOfNodes);
     }
 
-    get rootHash(): string {
-        return this.root.hash;
+    isValid(transaction: Transaction): boolean {
+        let hash = transaction.hash;
+        let sibling = this.findSiblingOf(hash);
+        while (sibling !== null && sibling.node.hash !== this.root.hash) {
+            const concatenatedHash = sibling.left ? sibling.node.hash + hash : hash + sibling.node.hash;
+            hash = calculateHash(concatenatedHash);
+            sibling = this.findSiblingOf(hash);
+        }
+        return !!(sibling && sibling.node.hash === this.root.hash);
     }
 
     private findSiblingOf(hash: string, siblingNode: MerkleTreeNode = this.root):
@@ -61,17 +72,6 @@ class MerkleTree {
             this.findSiblingOf(hash, siblingNode.left) ||
             this.findSiblingOf(hash, siblingNode.right)
         );
-    }
-
-    isValid(transaction: Transaction): boolean {
-        let hash = transaction.hash;
-        let sibling = this.findSiblingOf(hash);
-        while (sibling !== null && sibling.node.hash !== this.root.hash) {
-            const concatenatedHash = sibling.left ? sibling.node.hash + hash : hash + sibling.node.hash;
-            hash = calculateHash(concatenatedHash);
-            sibling = this.findSiblingOf(hash);
-        }
-        return !!(sibling && sibling.node.hash === this.root.hash);
     }
 }
 

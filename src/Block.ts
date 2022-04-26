@@ -6,11 +6,11 @@ import type Transaction from "./Transaction";
 class Block {
     readonly data: Transaction[];
     readonly previousHash: string | null;
-    private readonly merkleTree: MerkleTree;
     readonly rootHash: string;
-    hash: string | null = null;
     readonly timestamp = new Date();
+    hash: string | null = null;
     proofOfWork = 0;
+    private readonly merkleTree: MerkleTree;
 
     constructor(data: Transaction[], previousHash: string | null) {
         this.data = data;

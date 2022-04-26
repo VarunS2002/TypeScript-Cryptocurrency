@@ -4,11 +4,11 @@ import Transaction from "./Transaction";
 import { calculateHash } from "./utilities";
 
 class Blockchain {
-    private readonly chain: Block[];
-    private difficulty: number;
     private static readonly blockTime = 10_000;
-    private readonly transactions: Transaction[] = [];
     private static readonly reward = 420;
+    private readonly chain: Block[];
+    private readonly transactions: Transaction[] = [];
+    private difficulty: number;
 
     private constructor(chain: Block[], difficulty: number) {
         this.chain = chain;
@@ -25,14 +25,6 @@ class Blockchain {
         const genesisBlock = new Block([firstTransaction], null);
         genesisBlock.mine(3);
         return new Blockchain([genesisBlock], 3);
-    }
-
-    private addBlock(transactions: Transaction[]): void {
-        const lastBlock = this.chain[this.chain.length - 1];
-        const newBlock = new Block(transactions, lastBlock.hash);
-        newBlock.mine(this.difficulty);
-        this.chain.push(newBlock);
-        this.difficulty += (Date.now() - newBlock.timestamp.getTime()) > Blockchain.blockTime ? -1 : 1;
     }
 
     isValid(): boolean {
@@ -84,6 +76,14 @@ class Blockchain {
         rewardTransaction.sign(NetworkWallet);
         this.addBlock([rewardTransaction, ...this.transactions]);
         this.transactions.splice(0, this.transactions.length);
+    }
+
+    private addBlock(transactions: Transaction[]): void {
+        const lastBlock = this.chain[this.chain.length - 1];
+        const newBlock = new Block(transactions, lastBlock.hash);
+        newBlock.mine(this.difficulty);
+        this.chain.push(newBlock);
+        this.difficulty += (Date.now() - newBlock.timestamp.getTime()) > Blockchain.blockTime ? -1 : 1;
     }
 }
 

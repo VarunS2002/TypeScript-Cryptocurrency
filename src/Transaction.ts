@@ -9,11 +9,11 @@ import type Blockchain from "./Blockchain";
 import type Wallet from "./Wallet";
 
 class Transaction {
-    private readonly id = v4();
     readonly senderPublicKey: string;
     readonly receiverPublicKey: string;
     readonly amount: number;
     readonly hash: string;
+    private readonly id = v4();
     private signature: string | undefined;
 
     constructor(senderPublicKey: string, receiverPublicKey: string, amount: number) {
