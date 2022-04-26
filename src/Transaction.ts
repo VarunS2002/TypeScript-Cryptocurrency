@@ -9,12 +9,12 @@ import type Blockchain from "./Blockchain";
 import type Wallet from "./Wallet";
 
 class Transaction {
-    id = v4();
-    senderPublicKey: string;
-    receiverPublicKey: string;
-    amount: number;
-    hash: string;
-    signature: string | null = null;
+    private readonly id = v4();
+    readonly senderPublicKey: string;
+    readonly receiverPublicKey: string;
+    readonly amount: number;
+    readonly hash: string;
+    private signature: string | undefined;
 
     constructor(senderPublicKey: string, receiverPublicKey: string, amount: number) {
         this.senderPublicKey = senderPublicKey;
@@ -24,7 +24,7 @@ class Transaction {
     }
 
     isValid(blockChain: Blockchain): boolean {
-        if (this.signature === null) return false;
+        if (this.signature === undefined) return false;
         const signature = Buffer.from(this.signature, 'base64');
         const verify = createVerify('sha256');
         verify.update(this.hash);

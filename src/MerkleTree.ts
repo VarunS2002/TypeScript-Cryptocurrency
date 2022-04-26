@@ -3,10 +3,10 @@ import { calculateHash } from "./utilities";
 import type Transaction from "./Transaction";
 
 class MerkleTree {
-    root: MerkleTreeNode;
-    size: number;
+    private readonly root: MerkleTreeNode;
+    private readonly size: number;
 
-    constructor(root: MerkleTreeNode, size: number) {
+    private constructor(root: MerkleTreeNode, size: number) {
         this.root = root;
         this.size = size;
     }
@@ -37,11 +37,11 @@ class MerkleTree {
         return this.constructMerkleTreeRoot(listOfNodes);
     }
 
-    getRootHash(): string {
+    get rootHash(): string {
         return this.root.hash;
     }
 
-    findSiblingOf(hash: string, siblingNode: MerkleTreeNode = this.root):
+    private findSiblingOf(hash: string, siblingNode: MerkleTreeNode = this.root):
         { node: MerkleTreeNode, left?: boolean } | null {
         if (siblingNode.hash === hash) return { node: siblingNode };
         if (!siblingNode.left || !siblingNode.right) return null;

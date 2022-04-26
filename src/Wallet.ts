@@ -3,8 +3,8 @@ import Transaction from './Transaction';
 import type Blockchain from './Blockchain';
 
 class Wallet {
-    privateKey: string;
-    publicKey: string;
+    readonly privateKey: string;
+    readonly publicKey: string;
 
     constructor() {
         const keyPair = generateKeyPairSync("rsa", {

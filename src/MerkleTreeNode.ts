@@ -1,7 +1,7 @@
 class MerkleTreeNode {
-    hash: string;
-    left: MerkleTreeNode | null;
-    right: MerkleTreeNode | null;
+    readonly hash: string;
+    readonly left: MerkleTreeNode | null;
+    readonly right: MerkleTreeNode | null;
 
     constructor(hash: string, left: MerkleTreeNode | null, right: MerkleTreeNode | null) {
         if (!(left == null && right == null || left != null && right != null)) {

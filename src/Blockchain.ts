@@ -4,13 +4,13 @@ import Transaction from "./Transaction";
 import { calculateHash } from "./utilities";
 
 class Blockchain {
-    chain: Block[];
-    difficulty: number;
-    blockTime = 10_000;
-    transactions: Transaction[] = [];
-    reward = 420;
+    private readonly chain: Block[];
+    private difficulty: number;
+    private static readonly blockTime = 10_000;
+    private readonly transactions: Transaction[] = [];
+    private static readonly reward = 420;
 
-    constructor(chain: Block[], difficulty: number) {
+    private constructor(chain: Block[], difficulty: number) {
         this.chain = chain;
         this.difficulty = difficulty;
     }
@@ -27,12 +27,12 @@ class Blockchain {
         return new Blockchain([genesisBlock], 3);
     }
 
-    addBlock(transactions: Transaction[]): void {
+    private addBlock(transactions: Transaction[]): void {
         const lastBlock = this.chain[this.chain.length - 1];
         const newBlock = new Block(transactions, lastBlock.hash);
         newBlock.mine(this.difficulty);
         this.chain.push(newBlock);
-        this.difficulty += (Date.now() - newBlock.timestamp.getTime()) > this.blockTime ? -1 : 1;
+        this.difficulty += (Date.now() - newBlock.timestamp.getTime()) > Blockchain.blockTime ? -1 : 1;
     }
 
     isValid(): boolean {
@@ -79,11 +79,11 @@ class Blockchain {
         const rewardTransaction = new Transaction(
             NetworkWallet.publicKey,
             rewardAddress,
-            this.reward
+            Blockchain.reward
         );
         rewardTransaction.sign(NetworkWallet);
         this.addBlock([rewardTransaction, ...this.transactions]);
-        this.transactions = [];
+        this.transactions.splice(0, this.transactions.length);
     }
 }
 
